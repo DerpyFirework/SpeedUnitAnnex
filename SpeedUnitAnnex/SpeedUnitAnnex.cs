@@ -17,7 +17,8 @@ namespace SpeedUnitAnnex
         private float kmph_ms = 3.6f;
         private float kn_ms = 0.514f;
 
-        private string kn =   " " + Localizer.Format("#SpeedUnitAnnex_knot");
+        private string knot =   " " + Localizer.Format("#SpeedUnitAnnex_knot");
+        private string kn = " " + Localizer.Format("#SpeedUnitAnnex_kn");
         private string kmph = " " + Localizer.Format("#SpeedUnitAnnex_kmph");
         private string mph =  " " + Localizer.Format("#SpeedUnitAnnex_mph");
 
@@ -170,27 +171,58 @@ namespace SpeedUnitAnnex
                                             if (FlightGlobals.ActiveVessel.altitude < -20 && isradar) // Submarine
                                                 titleText = Surf3 + Unitize_short(FlightGlobals.ActiveVessel.altitude - FlightGlobals.ActiveVessel.terrainAltitude) + "  " + (spd * kn_ms).ToString("F1") + kn;
                                             else                                                       // Boat
-                                                titleText = Surf5 + (spd * kn_ms).ToString("F1") + kn;
+                                                titleText = Surf5 + (spd / kn_ms).ToString("F1") + knot;
                                         }
                                         // Plane (not LANDED) 
                                         else if (vesselType == VesselType.Plane
                                             && situation != Vessel.Situations.LANDED && situation != Vessel.Situations.PRELAUNCH)
                                         {
                                             bool isradar = HighLogic.CurrentGame.Parameters.CustomParams<SpeedUnitAnnexSettings>().radar;
+                                            string planespeed = HighLogic.CurrentGame.Parameters.CustomParams<SpeedUnitAnnexSettings>().planeSpeed;
+                                            Debug.Log(planespeed);
+
                                             bool isATM = FlightGlobals.ActiveVessel.atmDensity > 0.0;
 
                                             if (isradar)
                                             {
                                                 if (isATM)
+                                                {
+                                                    if ( planespeed == SpeedUnitAnnexSettings.planeSpeedList[0].ToString())
                                                     titleText = Surf3 + Unitize_short(FlightGlobals.ActiveVessel.radarAltitude) + "  "
                                                         + Localizer.Format("#SpeedUnitAnnex_mach", FlightGlobals.ActiveVessel.mach.ToString("F1"));
 
+                                                    else if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[1].ToString())
+                                                        titleText = Surf3 + Unitize_short(FlightGlobals.ActiveVessel.radarAltitude) + "  "
+                                                        + (spd / kn_ms).ToString("F1") + kn;
+
+                                                    else if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[2].ToString())
+                                                        titleText = Surf3 + Unitize_short(FlightGlobals.ActiveVessel.radarAltitude) + "  "
+                                                        + (spd * kmph_ms).ToString("F1") + kmph;
+
+                                                    else //if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[3].ToString())
+                                                        titleText = Surf3 + Unitize_short(FlightGlobals.ActiveVessel.radarAltitude) + "  "
+                                                        + (spd * mph_ms).ToString("F1") + mph;
+                                                }
                                                 else titleText = Surf5 + Unitize_long(FlightGlobals.ActiveVessel.radarAltitude);
                                             }
                                             else
                                             {
                                                 if (isATM)
+                                                {
                                                     titleText = Surf5 + Localizer.Format("#SpeedUnitAnnex_mach", FlightGlobals.ActiveVessel.mach.ToString("F1"));
+
+                                                    if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[0].ToString())
+                                                        titleText = Surf5 + Localizer.Format("#SpeedUnitAnnex_mach", FlightGlobals.ActiveVessel.mach.ToString("F1"));
+
+                                                    else if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[1].ToString())
+                                                        titleText = Surf5 + (spd / kn_ms).ToString("F1") + knot;
+
+                                                    else if (planespeed == SpeedUnitAnnexSettings.planeSpeedList[2].ToString())
+                                                        titleText = Surf5 + (spd * kmph_ms).ToString("F1") + kmph;
+
+                                                    else   // SpeedUnitAnnexSettings.planeSpeedList[3].ToString()
+                                                        titleText = Surf5 + (spd * mph_ms).ToString("F1") + mph;
+                                                }
                                                 else titleText = Surface;
                                             }
                                         }
@@ -199,7 +231,10 @@ namespace SpeedUnitAnnex
                                         // but it make unclear to user, which values shows up.
                                         else //if FlightGlobals.ActiveVessel.radarAltitude < 100)
                                         {
-                                            if (HighLogic.CurrentGame.Parameters.CustomParams<SpeedUnitAnnexSettings>().kph)
+                                            string roverspeed = HighLogic.CurrentGame.Parameters.CustomParams<SpeedUnitAnnexSettings>().roverSpeed;
+
+
+                                            if (roverspeed == SpeedUnitAnnexSettings.roverSpeedList[0].ToString())
                                                 titleText = Surf5 + (spd * kmph_ms).ToString("F1") + kmph;
                                             else
                                                 titleText = Surf5 + (spd * mph_ms).ToString("F1") + mph;
